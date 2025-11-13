@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เครื่องคำนวณ BMI ด้วย JavaScript/HTML</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        .container {
+            max-width: 400px;
+            margin: auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #007bff;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        input[type="number"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-align: center;
+            background-color: #e9ecef;
+        }
+        .bmi-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #dc3545; /* สีแดงสำหรับเน้นผลลัพธ์ */
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>เครื่องคำนวณ BMI</h2>
+    
+    <div>
+        <label for="weight">น้ำหนัก (kg):</label>
+        <input type="number" id="weight" step="0.1" min="0" placeholder="เช่น 70">
+    </div>
+
+    <div>
+        <label for="height">ส่วนสูง (m):</label>
+        <input type="number" id="height" step="0.01" min="0" placeholder="เช่น 1.75">
+    </div>
+    
+    <button onclick="calculateAndDisplayBMI()">คำนวณ BMI</button>
+    
+    <div id="result">
+        กรอกข้อมูลเพื่อเริ่มต้น...
+    </div>
+</div>
+
+<script>
+    /**
+     * ฟังก์ชันสำหรับคำนวณค่า BMI
+     * @param {number} weight น้ำหนักตัวในหน่วยกิโลกรัม (kg)
+     * @param {number} height ส่วนสูงในหน่วยเมตร (m)
+     * @returns {number} ค่า BMI ที่คำนวณได้
+     */
+    function calculateBMI(weight, height) {
+        if (height <= 0) {
+            return null; // คืนค่า null ถ้าส่วนสูงไม่ถูกต้อง
+        }
+        const bmi = weight / (height * height);
+        return parseFloat(bmi.toFixed(2));
+    }
+
+    /**
+     * ฟังก์ชันสำหรับจำแนกประเภท BMI (ใช้เกณฑ์สำหรับคนเอเชีย)
+     * @param {number} bmi ค่า BMI
+     * @returns {string} ข้อความบอกประเภทของ BMI
+     */
+    function classifyBMI(bmi) {
+        if (bmi === null) {
+            return "กรุณาใส่ส่วนสูงที่ถูกต้อง";
+        } else if (bmi < 18.5) {
+            return "ผอม / น้ำหนักน้อยกว่าปกติ";
+        } else if (bmi >= 18.5 && bmi <= 22.9) {
+            return "ปกติ / สุขภาพดี";
+        } else if (bmi >= 23.0 && bmi <= 24.9) {
+            return "น้ำหนักเกิน";
+        } else if (bmi >= 25.0 && bmi <= 29.9) {
+            return "อ้วนระดับ 1";
+        } else {
+            return "อ้วนระดับ 2 / อ้วนอันตราย";
+        }
+    }
+
+    /**
+     * ฟังก์ชันหลักที่ดึงข้อมูลจาก input, คำนวณ และแสดงผลลัพธ์
+     */
+    function calculateAndDisplayBMI() {
+        // 1. ดึงค่าจากช่อง input
+        const weightInput = document.getElementById('weight').value;
+        const heightInput = document.getElementById('height').value;
+        
+        // แปลงค่าเป็นตัวเลข (ใช้ parseFloat เนื่องจากค่าอาจเป็นทศนิยม)
+        const weight = parseFloat(weightInput);
+        const height = parseFloat(heightInput);
+
+        const resultDiv = document.getElementById('result');
+
+        // 2. ตรวจสอบความถูกต้องของข้อมูล
+        if (isNaN(weight) || isNaN(height) || weight <= 0 || height <= 0) {
+            resultDiv.innerHTML = `<span style="color: red;">⚠️ กรุณาใส่ข้อมูล น้ำหนักและส่วนสูง ที่เป็นตัวเลขและมากกว่าศูนย์</span>`;
+            return;
+        }
+
+        // 3. คำนวณและจำแนกประเภท
+        const bmiResult = calculateBMI(weight, height);
+        const classification = classifyBMI(bmiResult);
+
+        // 4. แสดงผลลัพธ์
+        resultDiv.innerHTML = `
+            <div>ค่า BMI ของคุณคือ: <span class="bmi-value">${bmiResult}</span></div>
+            <div>การจัดประเภท: <strong>${classification}</strong></div>
+        `;
+    }
+</script>
+
+</body>
+</html>
