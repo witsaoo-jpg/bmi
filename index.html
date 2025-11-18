@@ -1,164 +1,213 @@
-<!DOCTYPE html>
+<!doctype html>
+
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>เครื่องคำนวณ BMI ด้วย JavaScript/HTML</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f4f4f9;
-            color: #333;
-        }
-        .container {
-            max-width: 400px;
-            margin: auto;
-            padding: 20px;
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        h2 {
-            text-align: center;
-            color: #007bff;
-        }
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-        }
-        input[type="number"] {
-            width: calc(100% - 22px);
-            padding: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        button {
-            width: 100%;
-            padding: 10px;
-            background-color: #28a745;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #218838;
-        }
-        #result {
-            margin-top: 20px;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            text-align: center;
-            background-color: #e9ecef;
-        }
-        .bmi-value {
-            font-size: 1.5em;
-            font-weight: bold;
-            color: #dc3545; /* สีแดงสำหรับเน้นผลลัพธ์ */
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BMI Calculator — ง่าย สวย และตอบผล</title>
+  <style>
+    :root{
+      --bg:#0f172a; /* dark navy */
+      --card:#0b1220;
+      --accent1: linear-gradient(135deg,#06b6d4 0%,#7c3aed 100%);
+      --glass: rgba(255,255,255,0.04);
+      --text:#e6eef8;
+      --muted: #9fb0d6;
+      --success: #16a34a;
+      --warn: #f59e0b;
+      --danger: #dc2626;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;background:radial-gradient(circle at 10% 10%, rgba(124,58,237,0.12), transparent 8%), radial-gradient(circle at 90% 90%, rgba(6,182,212,0.08), transparent 8%), var(--bg); color:var(--text)}
+    .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:32px}.card{
+  width:100%;max-width:920px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:16px;padding:28px;box-shadow:0 10px 30px rgba(2,6,23,0.6);display:grid;grid-template-columns:1fr 380px;gap:24px;align-items:start;border:1px solid rgba(255,255,255,0.04)
+}
+
+@media (max-width:880px){.card{grid-template-columns:1fr;max-width:540px}}
+
+.hero{
+  padding:18px;border-radius:12px;background:linear-gradient(135deg, rgba(255,255,255,0.02), transparent);
+}
+h1{margin:0;font-size:1.6rem;letter-spacing:-0.02em}
+p.lead{color:var(--muted);margin-top:8px;margin-bottom:18px}
+
+.form-row{display:flex;gap:12px;margin-bottom:12px}
+.form-row .col{flex:1}
+label{display:block;font-size:0.78rem;color:var(--muted);margin-bottom:6px}
+input[type="number"], select{width:100%;padding:12px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:var(--glass);color:var(--text);outline:none;font-size:1rem}
+input[type="number"]::placeholder{color:rgba(255,255,255,0.25)}
+
+.actions{display:flex;gap:10px;margin-top:14px}
+.btn{
+  padding:10px 14px;border-radius:10px;border:none;cursor:pointer;font-weight:600
+}
+.btn-primary{background:var(--accent1);color:white;box-shadow:0 6px 18px rgba(124,58,237,0.18)}
+.btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--text)}
+
+.panel{
+  background:linear-gradient(180deg, rgba(255,255,255,0.015), transparent);padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);
+}
+
+.result-big{display:flex;align-items:center;gap:16px}
+.bmi-value{font-size:2.8rem;font-weight:700}
+.bmi-meta{color:var(--muted)}
+
+.badge{display:inline-flex;padding:6px 10px;border-radius:999px;font-weight:700}
+
+.scale{margin-top:18px;display:flex;gap:8px;align-items:center}
+.scale > div{flex:1;height:12px;border-radius:999px;background:rgba(255,255,255,0.04);position:relative}
+.scale .fill{position:absolute;left:0;top:0;height:100%;border-radius:999px}
+
+.notes{font-size:0.9rem;color:var(--muted);margin-top:12px}
+
+footer.small{margin-top:12px;font-size:0.82rem;color:var(--muted)}
+
+  </style>
 </head>
 <body>
-
- <div class="container-fluid">
-
- 
-
-
-
-
-<div class="container">
-    <h2>เครื่องคำนวณ BMI</h2>
-    
-    <div>
-        <label for="weight">น้ำหนัก (kg):</label>
-        <input type="number" id="weight" step="0.1" min="0" placeholder="เช่น 70">
+  <div class="wrap">
+    <div class="card" role="main">
+      <section class="hero">
+        <h1>เครื่องคำนวณ BMI — สวย ง่าย และแม่นยำ</h1>
+        <p class="lead">กรอกค่าน้ำหนัก และส่วนสูง เลือกหน่วย แล้วกดคำนวณ ผลลัพธ์และคำแนะนำจะแสดงทันที</p><div class="form-row">
+      <div class="col">
+        <label for="weight">น้ำหนัก</label>
+        <input id="weight" type="number" min="0" step="0.1" placeholder="เช่น 68.5" aria-label="น้ำหนัก">
+      </div>
+      <div class="col">
+        <label for="height">ส่วนสูง</label>
+        <input id="height" type="number" min="0" step="0.01" placeholder="เช่น 1.70 (เมตร)" aria-label="ส่วนสูง">
+      </div>
     </div>
 
-    <div>
-        <label for="height">ส่วนสูง (m):</label>
-        <input type="number" id="height" step="0.01" min="0" placeholder="เช่น 1.75">
+    <div class="form-row">
+      <div class="col">
+        <label for="unit">หน่วย</label>
+        <select id="unit" aria-label="หน่วย">
+          <option value="metric">กิโลกรัม / เมตร</option>
+          <option value="kgcm">กิโลกรัม / เซนติเมตร</option>
+          <option value="imperial">ปอนด์ / นิ้ว (lb/in)</option>
+        </select>
+      </div>
+
+      <div class="col" style="display:flex;align-items:end;justify-content:flex-end">
+        <div class="actions">
+          <button id="calcBtn" class="btn btn-primary">คำนวณ BMI</button>
+          <button id="resetBtn" class="btn btn-ghost">รีเซ็ต</button>
+        </div>
+      </div>
     </div>
-    
-    <button onclick="calculateAndDisplayBMI()">คำนวณ BMI</button>
-    
-    <div id="result">
-        กรอกข้อมูลเพื่อเริ่มต้น...
+
+    <div class="notes">เกณฑ์การแปลผลใช้ค่าเกณฑ์สำหรับประชากรเอเชีย: &lt;18.5 = ผอม, 18.5–22.9 = ปกติ, 23–24.9 = น้ำหนักเกิน, 25–29.9 = อ้วน, ≥30 = อ้วนมาก</div>
+  </section>
+
+  <aside class="panel" aria-live="polite">
+    <div class="result-big">
+      <div>
+        <div class="bmi-value" id="bmiValue">—</div>
+        <div class="bmi-meta" id="bmiMeta">กรอกข้อมูลแล้วกดคำนวณ</div>
+      </div>
     </div>
+
+    <div style="margin-top:12px">
+      <div class="scale" aria-hidden="true">
+        <div style="background:linear-gradient(90deg,#0ea5a0,#06b6d4)"><div id="fillBar" class="fill" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
+      <div class="badge" id="badge" style="background:rgba(255,255,255,0.03)">ผลการประเมิน</div>
+      <div class="badge" id="advice" style="background:transparent;color:var(--muted);font-weight:600"></div>
+    </div>
+
+    <div class="notes" id="extraNote">คำแนะนำเป็นข้อมูลทั่วไป หากมีข้อกังวลกรุณาปรึกษาแพทย์หรือนักโภชนาการ</div>
+    <footer class="small">เปิดไฟล์นี้ในเว็บเบราว์เซอร์ — รองรับมือถือ</footer>
+  </aside>
 </div>
 
-<script>
-    /**
-     * ฟังก์ชันสำหรับคำนวณค่า BMI
-     * @param {number} weight น้ำหนักตัวในหน่วยกิโลกรัม (kg)
-     * @param {number} height ส่วนสูงในหน่วยเมตร (m)
-     * @returns {number} ค่า BMI ที่คำนวณได้
-     */
-    function calculateBMI(weight, height) {
-        if (height <= 0) {
-            return null; // คืนค่า null ถ้าส่วนสูงไม่ถูกต้อง
-        }
-        const bmi = weight / (height * height);
-        return parseFloat(bmi.toFixed(2));
+  </div>  <script>
+    const weightEl = document.getElementById('weight');
+    const heightEl = document.getElementById('height');
+    const unitEl = document.getElementById('unit');
+    const calcBtn = document.getElementById('calcBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const bmiValueEl = document.getElementById('bmiValue');
+    const bmiMetaEl = document.getElementById('bmiMeta');
+    const fillBar = document.getElementById('fillBar');
+    const badge = document.getElementById('badge');
+    const advice = document.getElementById('advice');
+
+    function clamp(v,min,max){return Math.max(min,Math.min(max,v));}
+
+    function calculateBMI(){
+      const w = parseFloat(weightEl.value);
+      const h = parseFloat(heightEl.value);
+      const unit = unitEl.value;
+
+      if(!w || !h || w<=0 || h<=0){
+        bmiValueEl.textContent = '—';
+        bmiMetaEl.textContent = 'กรอกค่าน้ำหนักและส่วนสูงให้ถูกต้องก่อน';
+        fillBar.style.width = '0%';
+        badge.textContent = 'ผลการประเมิน';
+        advice.textContent = '';
+        return;
+      }
+
+      let bmi;
+      if(unit === 'metric'){
+        bmi = w / (h * h);
+      } else if(unit === 'kgcm'){
+        // ถ้ากรอกส่วนสูงเป็นเซนติเมตร
+        const heightM = h / 100.0;
+        bmi = w / (heightM * heightM);
+      } else {
+        // imperial: pounds / inches
+        bmi = (w / (h * h)) * 703;
+      }
+
+      bmi = Math.round(bmi * 100) / 100;
+      bmiValueEl.textContent = bmi.toFixed(2);
+
+      // แปลผลตามเกณฑ์เอเชีย
+      let category = '';
+      let color = '';
+      let msg = '';
+
+      if(bmi < 18.5){
+        category = 'ผอม'; color = 'linear-gradient(90deg,#60a5fa,#3b82f6)'; msg = 'น้ำหนักต่ำกว่าปกติ — เสี่ยงต่อภาวะขาดสารอาหาร';
+      } else if(bmi < 23){
+        category = 'ปกติ'; color = 'linear-gradient(90deg,#34d399,#10b981)'; msg = 'น้ำหนักอยู่ในเกณฑ์ปกติ — รักษาระดับนี้ไว้';
+      } else if(bmi < 25){
+        category = 'น้ำหนักเกิน'; color = 'linear-gradient(90deg,#fbbf24,#f97316)'; msg = 'เริ่มมีน้ำหนักเกิน — พิจารณาปรับอาหารและเพิ่มกิจกรรม';
+      } else if(bmi < 30){
+        category = 'อ้วน'; color = 'linear-gradient(90deg,#fb7185,#ef4444)'; msg = 'น้ำหนักในระดับอ้วน — ควรปรึกษาผู้เชี่ยวชาญเพื่อแผนการลดน้ำหนัก';
+      } else {
+        category = 'อ้วนมาก'; color = 'linear-gradient(90deg,#ef4444,#b91c1c)'; msg = 'เสี่ยงโรคหลายอย่าง — ควรได้รับคำแนะนำจากแพทย์';
+      }
+
+      bmiMetaEl.textContent = category;
+      badge.textContent = category;
+      badge.style.background = color;
+      badge.style.color = 'white';
+      advice.textContent = msg;
+
+      // เติมแถบแสดงระดับ (normalize BMI to 10..40 range for visualization)
+      const min = 10, max = 40;
+      const pct = clamp(((bmi - min) / (max - min)) * 100, 0, 100);
+      fillBar.style.width = pct + '%';
+      fillBar.style.background = color;
     }
 
-    /**
-     * ฟังก์ชันสำหรับจำแนกประเภท BMI (ใช้เกณฑ์สำหรับคนเอเชีย)
-     * @param {number} bmi ค่า BMI
-     * @returns {string} ข้อความบอกประเภทของ BMI
-     */
-    function classifyBMI(bmi) {
-        if (bmi === null) {
-            return "กรุณาใส่ส่วนสูงที่ถูกต้อง";
-        } else if (bmi < 18.5) {
-            return "ผอม / น้ำหนักน้อยกว่าปกติ";
-        } else if (bmi >= 18.5 && bmi <= 22.9) {
-            return "ปกติ / สุขภาพดี";
-        } else if (bmi >= 23.0 && bmi <= 24.9) {
-            return "น้ำหนักเกิน";
-        } else if (bmi >= 25.0 && bmi <= 29.9) {
-            return "อ้วนระดับ 1";
-        } else {
-            return "อ้วนระดับ 2 / อ้วนอันตราย";
-        }
-    }
+    calcBtn.addEventListener('click', calculateBMI);
+    resetBtn.addEventListener('click', ()=>{
+      weightEl.value = '';
+      heightEl.value = '';
+      unitEl.value = 'metric';
+      calculateBMI();
+    });
 
-    /**
-     * ฟังก์ชันหลักที่ดึงข้อมูลจาก input, คำนวณ และแสดงผลลัพธ์
-     */
-    function calculateAndDisplayBMI() {
-        // 1. ดึงค่าจากช่อง input
-        const weightInput = document.getElementById('weight').value;
-        const heightInput = document.getElementById('height').value;
-        
-        // แปลงค่าเป็นตัวเลข (ใช้ parseFloat เนื่องจากค่าอาจเป็นทศนิยม)
-        const weight = parseFloat(weightInput);
-        const height = parseFloat(heightInput);
-
-        const resultDiv = document.getElementById('result');
-
-        // 2. ตรวจสอบความถูกต้องของข้อมูล
-        if (isNaN(weight) || isNaN(height) || weight <= 0 || height <= 0) {
-            resultDiv.innerHTML = `<span style="color: red;">⚠️ กรุณาใส่ข้อมูล น้ำหนักและส่วนสูง ที่เป็นตัวเลขและมากกว่าศูนย์</span>`;
-            return;
-        }
-
-        // 3. คำนวณและจำแนกประเภท
-        const bmiResult = calculateBMI(weight, height);
-        const classification = classifyBMI(bmiResult);
-
-        // 4. แสดงผลลัพธ์
-        resultDiv.innerHTML = `
-            <div>ค่า BMI ของคุณคือ: <span class="bmi-value">${bmiResult}</span></div>
-            <div>การจัดประเภท: <strong>${classification}</strong></div>
-        `;
-    }
-</script>
-</div>
-</body>
+    // Enter key triggers calculate
+    [weightEl, heightEl].forEach(el => el.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') calculateBMI(); }));
+  </script></body>
 </html>
